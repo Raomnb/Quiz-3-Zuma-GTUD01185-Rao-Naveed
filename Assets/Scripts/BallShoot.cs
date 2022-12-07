@@ -48,18 +48,27 @@ public class BallShoot : ZumaView
         mousePos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)); //get current move position
             
         rb.AddForce(Vector2.MoveTowards(transform.position,mousePos,10) * 10, ForceMode2D.Impulse); // add force in direction of mouse position
-        ballInstance = null; //set ball instance null so new ball can be spawned
+        StartCoroutine(Destroy()); //destroy spawned ball after 2 seconds
+      //  ballInstance = null; //set ball instance null so new ball can be spawned
+
        
     }
     private void SpawnBall()
     {
         if (ballInstance == null) // if ball instance is null meaning ball is shot then instantiate new random ball
         {
+            StopAllCoroutines();
             index = Random.Range(0, ballsPrefab.Length); // get random index
             ballInstance = Instantiate(ballsPrefab[index], new Vector2(0f, -1.5f), ballsPrefab[index].transform.rotation); //spawn random color ball
             rb = ballInstance.gameObject.GetComponent<Rigidbody2D>(); //set rb as rigid body of spawned ball
             rb.gravityScale = 0;  // set gravity 0
+           
         }
+    }
+    IEnumerator Destroy()
+    {
+        yield return new WaitForSeconds(2);
+        Destroy(ballInstance.gameObject);
     }
     
 
